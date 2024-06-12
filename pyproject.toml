@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=70.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mipasa_swarm_connector"
+version = "1.0.1"
+authors = [
+  { name="MiPasa", email="github@mipasa.com" }
+]
+description = "MiPasa connector for Swarm (BZZ) distributed storage network"
+license.file = "LICENSE"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "requests >= 2.31.0",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest >= 7.1.2",
+    "pytest-mock >= 3.8.2",
+    "requests-mock >= 1.12.1",
+    "pandas >= 1.5.3",
+    "pyarrow >= 13.0.0",
+    "fastparquet >= 2024.2.0"
+]
+pandas = [
+    "pandas >= 1.5.3"
+]
+parquet = [
+    "pyarrow >= 13.0.0"
+]
+parquet-pyarrow = [
+    "pyarrow >= 13.0.0"
+]
+parquet-fastparquet = [
+    "fastparquet >= 2024.2.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/MiPasa/mipasa-swarm-connector"
+Issues = "https://github.com/MiPasa/mipasa-swarm-connector/issues"
