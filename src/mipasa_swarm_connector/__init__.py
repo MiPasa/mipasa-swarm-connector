@@ -47,7 +47,7 @@ class SwarmTypeError(SwarmError, TypeError):
 
 
 class SwarmConnection:
-    def __init__(self, gateway_url=None):
+    def __init__(self, gateway_url=None, session=None):
         if not gateway_url:
             gateway_url = os.getenv('BEE_GATEWAY_URL')
         if not gateway_url:
@@ -55,9 +55,15 @@ class SwarmConnection:
 Please either specify the URL explicitly in SwarmConnection() constructor,
  or set the environment variable BEE_GATEWAY_URL to the desired address.""")
         self.gateway_url = gateway_url
+        self.session = session
 
     def __repr__(self):
         return "<SwarmConnection>"
+
+    def _session(self):
+        if self.session is not None:
+            return self.session
+        return requests
 
     @staticmethod
     def _detect_type(r):
@@ -89,7 +95,7 @@ Please either specify the URL explicitly in SwarmConnection() constructor,
         return "bytes"
 
     def _read_file_internal(self, swarm_hash):
-        r = requests.get(
+        r = self._session().get(
             '%s/bzz/%s' % (self.gateway_url, urllib.parse.quote(swarm_hash))
         )
 
@@ -185,7 +191,7 @@ Please either specify the URL explicitly in SwarmConnection() constructor,
         return 'json'
 
     def _write_file_internal(self, content, file_name, mime_type, batch_id):
-        r = requests.post(
+        r = self._session().post(
             '%s/bzz?file_name=%s' % (self.gateway_url, urllib.parse.quote(file_name)),
             content,
             headers={

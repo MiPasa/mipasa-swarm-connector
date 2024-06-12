@@ -16,6 +16,7 @@
 import pandas as pd
 import pytest
 import json
+import requests
 import urllib.parse
 from io import BytesIO
 from mipasa_swarm_connector import SwarmConnection, SwarmTypeError
@@ -89,6 +90,24 @@ def test_file_upload(requests_mock):
     assert rs[0][0].body == b'test3'
     assert rs[0][0].headers['swarm-postage-batch-id'] == '2'
     assert rs[0][0].headers['Content-Type'] == 'text/csv'
+
+
+
+def test_requests_session(requests_mock):
+    rs, url = mock_upload(
+        requests_mock,
+        'file.bin',
+        content=b'{"reference": "testhash"}'
+    )
+
+    with requests.Session() as session:
+        session.headers['Authorization'] = 'Bearer test-qwerty'
+        assert 'testhash' == SwarmConnection(url, session=session).write_file(b'test')
+        assert len(rs) == 1
+        assert rs[0][0].body == b'test'
+        assert rs[0][0].headers['swarm-postage-batch-id'] == '0000000000000000000000000000000000000000000000000000000000000000'
+        assert rs[0][0].headers['Content-Type'] == 'application/octet-stream'
+        assert rs[0][0].headers['Authorization'] == 'Bearer test-qwerty'
 
 
 def test_file_upload_as_csv(requests_mock):
